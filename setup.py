@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='numberwang',
-    version='0.1',
+    version='0.2',
     packages=['numberwang'],
     author='Mike Cooper',
     author_email='mythmon@gmail.com',
