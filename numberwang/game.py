@@ -9,19 +9,40 @@ class NumberWang(ChatPlugin):
 
     def setup(self, *args, **kwargs):
         super(NumberWang, self).setup(*args, **kwargs)
-        self.next_numberwang()
+        self.numberwang = []
+        self.more_numberwangs()
 
-    def next_numberwang(self):
-        self.numberwang = round(abs(random.gauss(0, 500)))
-        print 'New numberwang is %d' % self.numberwang
+    def more_numberwangs(self, goal=0.9):
+        again = random.random()
+
+        while again < goal:
+            another = round(abs(random.gauss(0, 100)))
+            self.numberwang.append(another)
+            print 'New numberwang is %d' % another
+            again = random.random()
+            goal **= 2
 
     def message(self, bot, comm):
-        numbers = re.findall(r'\d+', comm['message'])
-        if any(int(d) == self.numberwang for d in numbers):
-            bot.reply(comm, "That's numberwang!")
-            self.next_numberwang()
-        if random.random() > 0.9:
-            self.next_numberwang()
+        numbers = [int(d) for d in re.findall(r'\d+', comm['message'])]
+
+        for d in numbers:
+            if d in self.numberwang:
+                bot.reply(comm, self.success(d))
+                self.numberwang = []
+                self.more_numberwangs()
+                break
+
+        self.more_numberwangs(0.9 if numbers else 0.1)
+
+    def success(self, num):
+        return random.choice(
+            ["That's numberwang!"] * 5 +
+            ["THAT'S NUMBERWANG!"] * 3 +
+            ["That's wanganum!"] * 3 +
+            ["Did someone say %d? That's numberwang!" % num] * 2 +
+            ["That's numberwank!"] +
+            ["Love those decimals. Numberwang!"]
+        )
 
 
 numberwang = NumberWang()
